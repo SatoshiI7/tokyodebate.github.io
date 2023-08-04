@@ -142,27 +142,44 @@ function showStats(text, motion) {
 //Copy buttonを作る
 function createCopyButton(myMotionsList, myRoundLabel) {
 	//[motion, info]の組のリストでであるmyMotionsListをコピーするテキストに変換
-	var myText = "";
+	var myMotionText = "";
+	var myInfoText = "";
 	if (myMotionsList.length === 1) {
 		//NA or BP
-		myText = "**Motion**: " + myMotionsList[0][0] + "\n\n";
+		myMotionText = `\n\n**Motion**: ${myMotionsList[0][0]}`;
 		if (myMotionsList[0][1] != "") {
-			myText += "Info: " + myMotionsList[0][1] + "\n";
+			myInfoText = `**\n\nInfo**: ${myMotionsList[0][1]}`;
 		}
-	} else if (myMotionsList.length === 3) {
+	} else if (myMotionsList.length <= 3 && myMotionsList.length >= 1) {
 		//AsianはMotion/info Aなどと表記
+		console.log(myMotionsList);
 		for (var i = 0; i < 3; i++) {
-			myText += `**Motion ${["A", "B", "C"][i]}**: ${myMotionsList[i][0]}\n`;
+			myMotionText += `\n\n**Motion ${["A", "B", "C"][i]}**: ${
+				myMotionsList[i][0]
+			}`;
 			if (myMotionsList[i][1] != "") {
-				myText += "Info: " + myMotionsList[i][1] + "\n";
+				myInfoText += `\n\n**Info ${["A", "B", "C"][i]}**: ${
+					myMotionsList[i][1]
+				}`;
 			}
 		}
 	}
-	myText +=
-		"(" + myRoundLabel.text().split(":")[0] + ", " + myTournamentName + ")";
-	$("<button class='btn btn-outline-secondary'>Copy</button>")
-		.appendTo(myRoundLabel)
+	myMotionText += `\n\n(${
+		myRoundLabel.text().split(":")[0]
+	}, ${myTournamentName}`;
+	//Create div for buttons
+	myButtons = $("<div class='d-inline'></div>").appendTo(myRoundLabel);
+	//Info
+	if (myInfoText != "") {
+		$("<button class='btn btn-outline-secondary'>Copy Info</button>")
+			.appendTo(myButtons)
+			.on("click", function () {
+				navigator.clipboard.writeText(myInfoText.slice(2));
+			});
+	}
+	$("<button class='btn btn-outline-secondary'>Copy Motion</button>")
+		.appendTo(myButtons)
 		.on("click", function () {
-			navigator.clipboard.writeText(myText);
+			navigator.clipboard.writeText(myMotionText.slice(2));
 		});
 }
